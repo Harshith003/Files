@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TeleConnect – AEM Backend Interview Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0d14;
+    --surface: #111623;
+    --surface2: #161d2e;
+    --border: #1e2a42;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code-bg: #0d1117;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* HEADER */
+  .hero {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0d1117 0%, #111623 60%, #0f1a2e 100%);
+    padding: 2.5rem 2rem 2rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    background: linear-gradient(90deg, #fff 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+  .hero p { color: var(--muted); font-size: 0.95rem; }
+  .hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.2rem; }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+  .badge-blue { border-color: var(--accent); color: var(--accent); }
+  .badge-purple { border-color: var(--accent2); color: var(--accent2); }
+  .badge-green { border-color: var(--accent3); color: var(--accent3); }
+  .badge-yellow { border-color: var(--warn); color: var(--warn); }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h3 { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-bottom: 1rem; }
+  .toc ol { padding-left: 1.2rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .section-header {
+    background: var(--surface2);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 6px;
+    padding: 2px 8px;
+  }
+  .section-header h2 { font-size: 1.1rem; font-weight: 700; }
+  .section-body { padding: 1.5rem; }
+
+  /* FILE BLOCK */
+  .file-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1.8rem;
+  }
+  .file-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+  .file-icon { font-size: 0.85rem; }
+  .file-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .file-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+  .type-model { background: rgba(124,58,237,0.15); color: var(--accent2); border: 1px solid rgba(124,58,237,0.3); }
+  .type-scheduler { background: rgba(245,158,11,0.12); color: var(--warn); border: 1px solid rgba(245,158,11,0.25); }
+  .type-filter { background: rgba(16,185,129,0.12); color: var(--accent3); border: 1px solid rgba(16,185,129,0.25); }
+  .type-listener { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+  .type-servlet { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+  .type-htl { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+
+  .file-content { padding: 1rem 1.2rem; }
+
+  /* LINE EXPLAIN */
+  .line-explain {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid rgba(30,42,66,0.7);
+  }
+  .line-explain:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .code-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    background: rgba(0,212,255,0.04);
+    border-left: 3px solid var(--accent);
+    padding: 0.5rem 0.8rem;
+    border-radius: 0 5px 5px 0;
+    margin-bottom: 0.5rem;
+    color: #a5d8ff;
+    word-break: break-word;
+  }
+  .code-line.purple { border-color: var(--accent2); background: rgba(124,58,237,0.05); color: #c4b5fd; }
+  .code-line.green { border-color: var(--accent3); background: rgba(16,185,129,0.05); color: #6ee7b7; }
+  .code-line.yellow { border-color: var(--warn); background: rgba(245,158,11,0.05); color: #fcd34d; }
+  .code-line.red { border-color: #f87171; background: rgba(239,68,68,0.05); color: #fca5a5; }
+
+  .explain-text { font-size: 0.87rem; color: var(--text); line-height: 1.65; }
+  .explain-text strong { color: var(--accent); }
+  .explain-text em { color: var(--warn); font-style: normal; font-weight: 600; }
+
+  /* AEM TOPICS */
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .topic-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+  }
+  .topic-card h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .topic-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* INTERVIEW QA */
+  .qa-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .qa-q {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--warn);
+    margin-bottom: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .qa-a { font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+  .qa-a strong { color: var(--accent3); }
+
+  /* FLOW */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+  .flow-step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 0.8rem 0;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 44px;
+    width: 2px;
+    height: calc(100% - 20px);
+    background: var(--border);
+  }
+  .flow-dot {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 50%;
+    background: rgba(0,212,255,0.1);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+  }
+  .flow-info h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.2rem; }
+  .flow-info p { font-size: 0.8rem; color: var(--muted); }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.6rem; }
+    .section-body { padding: 1rem; }
+    .file-content { padding: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">AEM Interview Preparation</div>
+    <h1>TeleConnect Project<br/>Backend Deep Dive</h1>
+    <p>Every Java file, every HTL template, every annotation — explained line by line for your interview.</p>
+    <div class="hero-badges">
+      <span class="badge badge-blue">Sling Models</span>
+      <span class="badge badge-purple">OSGi / DS</span>
+      <span class="badge badge-green">Content Fragments</span>
+      <span class="badge badge-yellow">Schedulers</span>
+      <span class="badge badge-blue">HTL / Sightly</span>
+      <span class="badge badge-purple">JCR / ResourceResolver</span>
+      <span class="badge badge-green">Sling Filters</span>
+      <span class="badge badge-yellow">Event Listeners</span>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#s1">Project Structure Overview</a></li>
+      <li><a href="#s2">Models — Sling Models (all 7 files)</a></li>
+      <li><a href="#s3">Scheduler — PlanCardScheduler & SimpleScheduledTask</a></li>
+      <li><a href="#s4">Filter — LoggingFilter</a></li>
+      <li><a href="#s5">Listener — SimpleResourceListener</a></li>
+      <li><a href="#s6">Servlet — SimpleServlet</a></li>
+      <li><a href="#s7">HTL Templates (all components)</a></li>
+      <li><a href="#s8">AEM Topics Covered in This Project</a></li>
+      <li><a href="#s9">End-to-End Data Flow</a></li>
+      <li><a href="#s10">Likely Interview Questions & Answers</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Project Structure Overview</h2>
+    </div>
+    <div class="section-body">
+      <p style="font-size:0.9rem;margin-bottom:1.2rem;">TeleConnect is a standard <strong style="color:var(--accent)">AEM Maven multi-module project</strong> (also called an archetype project). Here's what each folder does:</p>
+      <div class="topic-grid">
+        <div class="topic-card">
+          <h4>📁 core/</h4>
+          <p>All Java backend code — Models, Schedulers, Filters, Listeners, Servlets. This is the OSGi bundle.</p>
+        </div>
+        <div class="topic-card">
+          <h4>📁 ui.apps/</h4>
+          <p>JCR content that goes under /apps — component HTL templates, clientlibs (CSS/JS), component definitions (.content.xml).</p>
+        </div>
+        <div class="topic-card">
+          <h4>📁 ui.content/</h4>
+          <p>JCR content under /content — actual pages, templates, configurations. (Not shown but standard AEM structure.)</p>
+        </div>
+        <div class="topic-card">
+          <h4>📁 all/</h4>
+          <p>The packaging module. Combines all submodules into one deployable ZIP (content package) for AEM.</p>
+        </div>
+        <div class="topic-card">
+          <h4>📄 pom.xml (root)</h4>
+          <p>Parent POM. Declares all submodules, dependency versions (AEM API, Sling, Jackrabbit, etc.).</p>
+        </div>
+        <div class="topic-card">
+          <h4>📁 it.tests/</h4>
+          <p>Integration tests. CreatePageIT and GetPageIT test page creation/retrieval against a running AEM instance.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Models — Sling Models (7 Files)</h2>
+    </div>
+    <div class="section-body">
+
+      <!-- HeaderModel -->
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">☕</span>
+          <span class="file-name">HeaderModel.java</span>
+          <span class="file-type type-model">Sling Model</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)</div>
+            <div class="explain-text">
+              <strong>@Model</strong> registers this class as a Sling Model. <em>adaptables = SlingHttpServletRequest.class</em> means this model is created by adapting an incoming HTTP request — so it can access request, resource, and session context. <strong>DefaultInjectionStrategy.OPTIONAL</strong> means if a property is missing in JCR, it won't throw an error — it simply injects null instead of failing.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ValueMapValue private String logoPath;</div>
+            <div class="explain-text">
+              <strong>@ValueMapValue</strong> reads the property named <em>logoPath</em> directly from the component's JCR node (the ValueMap). This is what an author stores in the component dialog. The field name must match the JCR property name (or you can use <code>name = "..."</code> to override).
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ChildResource private List&lt;NavLink&gt; navLinks;</div>
+            <div class="explain-text">
+              <strong>@ChildResource</strong> reads a child node of the component node named <em>navLinks</em> and maps each sub-node to the inner <code>NavLink</code> class (which is itself a Sling Model adaptable from Resource). This is how <strong>multi-field dialogs</strong> (navigation links added by the author) are mapped to Java objects.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">static class NavLink — @ValueMapValue linkText, linkIcon, linkPath</div>
+            <div class="explain-text">
+              The inner static class is also annotated <strong>@Model(adaptables = Resource.class)</strong>. Each child resource under <em>navLinks</em> gets adapted into one NavLink. This pattern — an outer model with a List of inner models — represents a <strong>nested/multifield JCR structure</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FooterModel -->
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">☕</span>
+          <span class="file-name">FooterModel.java</span>
+          <span class="file-type type-model">Sling Model</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Model(adaptables = SlingHttpServletRequest.class, ...)</div>
+            <div class="explain-text">Same pattern as HeaderModel. Adaptable from request so it can read session context if needed.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ValueMapValue private String copyrightText;</div>
+            <div class="explain-text">Reads the <em>copyrightText</em> property from the footer component's JCR node — set by the author in the dialog.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ChildResource private List&lt;FooterLink&gt; footerLinks;</div>
+            <div class="explain-text">Maps multi-field footer links (stored as child nodes) into a list of <code>FooterLink</code> objects. Inner class has <em>linkText</em> and <em>linkPath</em>. Same nested Sling Model pattern as HeaderModel.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HeroBannerModel -->
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">☕</span>
+          <span class="file-name">HeroBannerModel.java</span>
+          <span class="file-type type-model">Sling Model</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)</div>
+            <div class="explain-text">
+              This model is <em>adaptable from Resource</em> (not the full request). It is a simpler, lighter model — only needs the resource (component node) to read its properties. No session-level access needed.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ValueMapValue — pretitle, title, description, primaryLinkText, primaryLinkUrl, secondaryLinkText, secondaryLinkUrl</div>
+            <div class="explain-text">
+              All content fields for the hero banner section. Each annotation reads the matching JCR property from the component dialog. These are author-editable fields that appear on the homepage hero section.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ValueMapValue — stat1Value, stat1Label, stat2Value, stat2Label, stat3Value, stat3Label</div>
+            <div class="explain-text">
+              Six fields for the <strong>3 statistics</strong> displayed in the hero (e.g., "500M+ Customers"). Each stat has a value and label, stored separately in JCR.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ProductHighlightModel -->
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">☕</span>
+          <span class="file-name">ProductHighlightModel.java</span>
+          <span class="file-type type-model">Sling Model</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Model(adaptables = SlingHttpServletRequest.class, ...)</div>
+            <div class="explain-text">Request-adaptable model for the product highlight banner shown on Prepaid/Postpaid/Broadband pages.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ValueMapValue — productTitle, description, bannerImage</div>
+            <div class="explain-text">Three simple authored properties. <em>bannerImage</em> typically stores a DAM path like <code>/content/dam/teleconnect/images/hero.jpg</code>. The HTL template conditionally renders the image only if <em>bannerImage</em> is non-null.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PlanListModel -->
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">☕</span>
+          <span class="file-name">PlanListModel.java</span>
+          <span class="file-type type-model">Sling Model + Content Fragments</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Model(adaptables = SlingHttpServletRequest.class, ...)</div>
+            <div class="explain-text">Request-adaptable because it needs <strong>ResourceResolver</strong> to traverse the JCR tree and find Content Fragments in DAM.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@SlingObject private ResourceResolver resourceResolver;</div>
+            <div class="explain-text"><strong>@SlingObject</strong> injects the current request's ResourceResolver. This is used to navigate to DAM paths and read Content Fragment resources. This is the <strong>Sling Resource API</strong> in action.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ValueMapValue private String sectionTitle; @ValueMapValue private String productType;</div>
+            <div class="explain-text"><em>productType</em> (prepaid / postpaid / broadband) is authored in the component dialog. Based on this value, the model resolves the correct CF folder path in DAM.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">@PostConstruct protected void init()</div>
+            <div class="explain-text">
+              <strong>@PostConstruct</strong> is called automatically after all injections are done. It is the initialization method — logic here: <br/>
+              1. Call <code>getCfRootPath(productType)</code> to map productType → DAM folder path.<br/>
+              2. Use <em>resourceResolver.getResource(cfRootPath)</em> to get the DAM folder.<br/>
+              3. Iterate all children, adapt each to <strong>ContentFragment</strong>.<br/>
+              4. Read each CF element (planName, cost, validity, benefits, etc.) and build PlanItem list.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line yellow">ContentFragment cf = child.adaptTo(ContentFragment.class);</div>
+            <div class="explain-text">
+              This is the <strong>Content Fragment API</strong>. <em>adaptTo(ContentFragment.class)</em> converts a Sling Resource (the CF node in DAM) into a ContentFragment object so you can call <em>getElement(elementName)</em> to read each field. This is a core AEM Content Fragment concept.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">private String getCfRootPath(String type) — switch on prepaid/postpaid/broadband</div>
+            <div class="explain-text">
+              Maps the authored productType to the corresponding DAM folder: <br/>
+              • prepaid → <code>/content/dam/teleconnect/telconnectplans/prepaidplans</code><br/>
+              • postpaid → <code>/content/dam/teleconnect/telconnectplans/postpaidplans</code><br/>
+              • broadband → <code>/content/dam/teleconnect/telconnectplans/broadbandplans</code>
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">private String getElementValue(ContentFragment cf, String elementName)</div>
+            <div class="explain-text">Null-safe helper method. Calls <code>cf.getElement(elementName).getValue().getValue()</code> wrapped in try-catch so that missing fields return empty string instead of crashing.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">public List&lt;PlanItem&gt; getPlans() / public boolean getHasPlans()</div>
+            <div class="explain-text">Getter methods exposed to the HTL template. In HTL, <code>${model.plans}</code> calls <em>getPlans()</em> and <code>${model.hasPlans}</code> calls <em>getHasPlans()</em>. Java Bean naming convention is critical here.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line purple">static class PlanItem — planName, cost, validity, benefits, addedAdvantage, offers, productType</div>
+            <div class="explain-text">A plain Java POJO (no Sling Model annotation needed here) that holds one plan's data. The list of these is returned to the template. Not an inner Sling Model because data comes from CF elements, not from resource adaptation.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SchedulerPlanListModel -->
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">☕</span>
+          <span class="file-name">SchedulerPlanListModel.java</span>
+          <span class="file-type type-model">Sling Model (Scheduler Data)</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@ValueMapValue private String plansRootPath; @ValueMapValue private Long initialCount;</div>
+            <div class="explain-text">
+              Unlike PlanListModel (which reads from DAM Content Fragments), this model reads plan data from <strong>CQ Pages</strong> created by the PlanCardScheduler. The <em>plansRootPath</em> is authored in the component dialog pointing to the parent page containing all imported plan pages.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">instanceId = Integer.toHexString(request.getResource().getPath().hashCode());</div>
+            <div class="explain-text">
+              Generates a unique ID based on the component's JCR path. This is used in HTL as a unique HTML element ID (<code>id="splGrid_${model.instanceId}"</code>). This is important when the same component is used multiple times on a page — avoids HTML ID collisions.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line yellow">for (Resource child : pageResource.getChildren()) — check jcr:primaryType == cq:Page</div>
+            <div class="explain-text">
+              Traverses child pages of the configured root path. Checks <code>jcr:primaryType = cq:Page</code> to skip any non-page resources. Then gets <code>jcr:content</code> of each page and reads plan properties from the ValueMap (these were written by PlanCardScheduler).
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">public int getInitialCount() — returns initialCount or default 4</div>
+            <div class="explain-text">Controls how many plan cards are shown initially (before "See More" is clicked). The value is authored in the dialog; defaults to 4 if not set. The JavaScript in <em>schedulerplanlist.js</em> uses this <code>data-initial</code> attribute to hide/show extra cards.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HelloWorldModel -->
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">☕</span>
+          <span class="file-name">HelloWorldModel.java</span>
+          <span class="file-type type-model">Sling Model (Demo)</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Model(adaptables = Resource.class)</div>
+            <div class="explain-text">Resource-adaptable demo model. This is from the AEM archetype and demonstrates basic Sling Model concepts.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ValueMapValue(name=PROPERTY_RESOURCE_TYPE, injectionStrategy=InjectionStrategy.OPTIONAL) @Default(values="No resourceType")</div>
+            <div class="explain-text"><strong>@Default</strong> provides a fallback value if the property is missing. <strong>injectionStrategy=InjectionStrategy.OPTIONAL</strong> at field level overrides the class-level strategy for this specific field.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@SlingObject private Resource currentResource; @SlingObject private ResourceResolver resourceResolver;</div>
+            <div class="explain-text"><strong>@SlingObject</strong> injects Sling API objects directly — the current resource and resolver.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">@PostConstruct init() — PageManager → getContainingPage → page path</div>
+            <div class="explain-text">Uses <code>resourceResolver.adaptTo(PageManager.class)</code> to get the WCM PageManager, then finds which CQ Page contains the current component resource. Demonstrates the <strong>adaptTo pattern</strong> for accessing AEM services from models.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Schedulers</h2>
+    </div>
+    <div class="section-body">
+
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">⏰</span>
+          <span class="file-name">PlanCardScheduler.java</span>
+          <span class="file-type type-scheduler">OSGi Scheduler</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Component(service = Runnable.class, immediate = true)</div>
+            <div class="explain-text">Registers this as an OSGi Component. <strong>service = Runnable.class</strong> tells OSGi this is a Runnable — which is how Sling Scheduler picks it up. <strong>immediate = true</strong> means activate it right when the bundle starts, without waiting for any service request.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line purple">@Designate(ocd = PlanCardScheduler.Config.class)</div>
+            <div class="explain-text"><strong>@Designate</strong> connects this component to its OSGi configuration (the inner Config interface). The configuration appears in AEM's OSGi Console (<code>/system/console/configMgr</code>) where an admin can change the cron expression and CSV paths without redeploying code.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line yellow">@ObjectClassDefinition — Config interface with @AttributeDefinition fields</div>
+            <div class="explain-text">
+              The inner Config interface defines configurable properties:<br/>
+              • <em>schedulerName</em> — name used to register/unregister the job<br/>
+              • <em>cronExpression</em> — "0 * * * * ?" means run every minute<br/>
+              • <em>prepaidCsvPath</em>, <em>postpaidCsvPath</em>, <em>broadbandCsvPath</em> — DAM paths to CSV files
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@Reference private ResourceResolverFactory resourceResolverFactory; @Reference private Scheduler scheduler;</div>
+            <div class="explain-text"><strong>@Reference</strong> is the OSGi dependency injection for services. <em>ResourceResolverFactory</em> creates ResourceResolvers for reading JCR. <em>Scheduler</em> is the Sling Scheduler service to register the cron job.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">@Activate activate(Config config)</div>
+            <div class="explain-text">Called when the component is activated (bundle starts or config changes). Saves the config and calls <em>addScheduler()</em> to register the cron job using <code>scheduler.EXPR(config.cronExpression())</code>.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">@Deactivate deactivate()</div>
+            <div class="explain-text">Called when the bundle is stopped. Calls <em>removeScheduler()</em> which calls <code>scheduler.unschedule(name)</code> — important to clean up, otherwise old scheduled jobs pile up.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line red">public void run() — getAdministrativeResourceResolver → importPlans × 3</div>
+            <div class="explain-text">
+              This is what runs on every cron tick. It:<br/>
+              1. Opens an administrative ResourceResolver (service user, wide access)<br/>
+              2. Calls <em>importPlans()</em> for prepaid, postpaid, and broadband CSV paths<br/>
+              3. Closes the resolver at the end (important — no resolver leaks)
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line yellow">importPlans() — read CSV from DAM → parse lines → PageManager.create() → Node.setProperty()</div>
+            <div class="explain-text">
+              This method:<br/>
+              1. Builds path to CSV binary: <code>csvPath + "/jcr:content/renditions/original/jcr:content"</code><br/>
+              2. Adapts the resource to <strong>InputStream</strong> to read the file<br/>
+              3. Uses <strong>PageManager.create()</strong> to create a CQ Page per plan<br/>
+              4. Uses <strong>Node.setProperty()</strong> (JCR API) to write planName, cost, validity, benefits, offers<br/>
+              5. Calls <strong>resolver.commit()</strong> to persist changes to JCR<br/>
+              6. Skips pages that already exist (checks with <em>pageManager.getPage()</em>)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">⏰</span>
+          <span class="file-name">SimpleScheduledTask.java</span>
+          <span class="file-type type-scheduler">OSGi Scheduler (Demo)</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Component(service=Runnable.class) + @Designate</div>
+            <div class="explain-text">Same scheduler pattern as PlanCardScheduler but simpler. Runs every 30 seconds. Has a configurable <em>myParameter</em> that is logged on each execution. This is the archetype demo scheduler.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">scheduler_expression = "*/30 * * * * ?" / scheduler_concurrent = false</div>
+            <div class="explain-text"><strong>scheduler_concurrent = false</strong> means if the previous run hasn't finished, the next scheduled run is skipped. This prevents overlapping executions — important for jobs that write to JCR.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Filter — LoggingFilter.java</h2>
+    </div>
+    <div class="section-body">
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">🔍</span>
+          <span class="file-name">LoggingFilter.java</span>
+          <span class="file-type type-filter">Sling Filter</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Component(service = Filter.class, property = { EngineConstants.SLING_FILTER_SCOPE + "=" + EngineConstants.FILTER_SCOPE_REQUEST })</div>
+            <div class="explain-text">
+              Registers this as a <strong>Sling Servlet Filter</strong>. The property <em>SLING_FILTER_SCOPE = REQUEST</em> means this filter intercepts <strong>every incoming HTTP request</strong> to AEM before it reaches the servlet/component. Other scopes are: INCLUDE, FORWARD, ERROR, COMPONENT.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">@ServiceRanking(-700)</div>
+            <div class="explain-text">Filters are executed in order of their service ranking. Lower negative numbers run later. -700 means this filter runs fairly late in the filter chain — after more critical filters. If you need a filter to run first, use a high positive number.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">doFilter(request, response, filterChain)</div>
+            <div class="explain-text">
+              The core filter method. It:<br/>
+              1. Casts <code>ServletRequest</code> to <code>SlingHttpServletRequest</code> to access Sling-specific methods<br/>
+              2. Logs the <em>resource path</em> and <em>selector string</em> at DEBUG level<br/>
+              3. Calls <code>filterChain.doFilter(request, response)</code> — this is MANDATORY. Without this line, the request never reaches the component/servlet.
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">init(FilterConfig) / destroy()</div>
+            <div class="explain-text">Lifecycle methods from the <em>javax.servlet.Filter</em> interface. Must be implemented even if empty. <em>init()</em> is called once when the filter is first loaded; <em>destroy()</em> when it's removed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Listener — SimpleResourceListener.java</h2>
+    </div>
+    <div class="section-body">
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">👂</span>
+          <span class="file-name">SimpleResourceListener.java</span>
+          <span class="file-type type-listener">Resource Change Listener</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@Component(service = ResourceChangeListener.class, immediate = true)</div>
+            <div class="explain-text">Registers as a <strong>ResourceChangeListener</strong> — an OSGi service that Sling calls whenever resources in the JCR change. <em>immediate = true</em> is required for event handlers and listeners to ensure they are active before any events fire.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">public void onChange(List&lt;ResourceChange&gt; changes)</div>
+            <div class="explain-text">
+              Called by Sling whenever a JCR change occurs. Each <code>ResourceChange</code> object has:<br/>
+              • <em>getType()</em> — ADDED, REMOVED, CHANGED, PROVIDER_ADDED, PROVIDER_REMOVED<br/>
+              • <em>getPath()</em> — the JCR path of the changed resource<br/>
+              • <em>isExternal()</em> — whether the change came from another cluster node<br/>
+              The listener simply logs each change at DEBUG level.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Servlet — SimpleServlet.java</h2>
+    </div>
+    <div class="section-body">
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">🌐</span>
+          <span class="file-name">SimpleServlet.java</span>
+          <span class="file-type type-servlet">Sling Servlet</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line purple">@SlingServletResourceTypes(resourceTypes="teleconnect/components/page", methods=HttpConstants.METHOD_GET, extensions="txt")</div>
+            <div class="explain-text">
+              Binds this servlet to a <strong>resource type + method + extension</strong> combination. This servlet is invoked when a GET request is made to any resource of type <em>teleconnect/components/page</em> with the <em>.txt</em> extension. Example URL: <code>/content/teleconnect/us/en/home.txt</code>
+            </div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">extends SlingSafeMethodsServlet</div>
+            <div class="explain-text"><strong>SlingSafeMethodsServlet</strong> is for read-only (idempotent) HTTP methods (GET, HEAD). If you need POST/PUT/DELETE, extend <strong>SlingAllMethodsServlet</strong> instead. This is a key Sling interview point.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line green">doGet() — resource.getValueMap().get(JcrConstants.JCR_TITLE)</div>
+            <div class="explain-text">Reads the <em>jcr:title</em> property from the requested resource's ValueMap and writes it to the response as plain text. Demonstrates the pattern: get resource from request → read from ValueMap → write to response.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>HTL Templates (All Components)</h2>
+    </div>
+    <div class="section-body">
+
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">📄</span>
+          <span class="file-name">header.html</span>
+          <span class="file-type type-htl">HTL Template</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line yellow">data-sly-use.model="com.teleconnect.core.core.models.HeaderModel"</div>
+            <div class="explain-text"><strong>data-sly-use</strong> instantiates the Sling Model and binds it to the variable <em>model</em>. HTL automatically adapts the current request to this class. This is the bridge between Java backend and HTML template.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">data-sly-test="${model.logoPath}" on &lt;img&gt;</div>
+            <div class="explain-text"><strong>data-sly-test</strong> is the HTL conditional. If <em>logoPath</em> is null or empty, the img element is not rendered at all. This prevents broken image tags on the page.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">data-sly-list.navItem="${model.navLinks}"</div>
+            <div class="explain-text"><strong>data-sly-list</strong> iterates over the list returned by <em>getNavLinks()</em>. Each iteration exposes <em>navItem</em> (the current NavLink). It also provides <em>navItem_list.index</em>, <em>navItem_list.count</em>, <em>navItem_list.first</em>, <em>navItem_list.last</em> as loop status variables.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">📄</span>
+          <span class="file-name">planlist.html</span>
+          <span class="file-type type-htl">HTL Template</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line yellow">data-sly-use.model="com.teleconnect.core.core.models.PlanListModel"</div>
+            <div class="explain-text">Loads PlanListModel. The model's <em>@PostConstruct init()</em> has already run before HTL gets control, so <em>model.plans</em> is already populated with data from Content Fragments.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">${itemList.index == 1 ? 'featured' : ''}</div>
+            <div class="explain-text"><strong>itemList</strong> is the loop status object in a <em>data-sly-list</em>. <em>itemList.index</em> is 0-based. So index 1 = second card = "Most Popular" featured card. This applies the CSS class conditionally.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">data-sly-test="${!model.hasPlans}" class="plan-section__empty"</div>
+            <div class="explain-text">Shows an empty state message only when <em>getHasPlans()</em> returns false. This is defensive rendering — the page never shows a blank grid.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">📄</span>
+          <span class="file-name">schedulerplanlist.html</span>
+          <span class="file-type type-htl">HTL Template</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line yellow">id="splGrid_${model.instanceId}"</div>
+            <div class="explain-text">Uses the unique <em>instanceId</em> from the model (hash of component path) so JS can target this specific component when multiple instances of it are on the same page.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">data-initial="${model.initialCount}" data-instance="${model.instanceId}"</div>
+            <div class="explain-text">Embeds model data as HTML data attributes. The JavaScript file (<em>schedulerplanlist.js</em>) reads these to know how many cards to show initially and which grid to target.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">data-sly-test="${plan.addedAdvantage}" / data-sly-test="${plan.offers}"</div>
+            <div class="explain-text">Optional fields — only rendered if the plan has an addedAdvantage or offers value. This is proper conditional rendering in HTL.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-block">
+        <div class="file-title">
+          <span class="file-icon">📄</span>
+          <span class="file-name">customheaderlibs.html / customfooterlibs.html</span>
+          <span class="file-type type-htl">ClientLib Inclusion</span>
+        </div>
+        <div class="file-content">
+          <div class="line-explain">
+            <div class="code-line yellow">data-sly-use.clientlib="core/wcm/components/commons/v1/templates/clientlib.html"</div>
+            <div class="explain-text">Loads the AEM Core Components client library template — a reusable HTL template that provides <em>clientlib.css</em> and <em>clientlib.js</em> helper functions.</div>
+          </div>
+          <div class="line-explain">
+            <div class="code-line">data-sly-call="${clientlib.css @ categories='teleconnect.base'}"</div>
+            <div class="explain-text"><strong>data-sly-call</strong> invokes the helper function, injecting all CSS from the clientlib category <em>teleconnect.base</em>. This renders the &lt;link&gt; tag pointing to the merged CSS file. Similarly for JS with <em>clientlib.js</em>.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>AEM Topics Covered in This Project</h2>
+    </div>
+    <div class="section-body">
+      <div class="topic-grid">
+        <div class="topic-card">
+          <h4 style="color:var(--accent2)">🧩 Sling Models</h4>
+          <p>@Model, @ValueMapValue, @ChildResource, @SlingObject, @PostConstruct, adaptables, DefaultInjectionStrategy, inner static models for multifield.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent)">📦 OSGi / DS</h4>
+          <p>@Component, @Reference, @Activate, @Deactivate, service registrations, @Designate + @ObjectClassDefinition for configurable services.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent3)">🗂️ Content Fragments</h4>
+          <p>adaptTo(ContentFragment.class), ContentElement, reading CF element values, iterating CF folders via ResourceResolver. Used in PlanListModel.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--warn)">⏰ Sling Scheduler</h4>
+          <p>Scheduler API, EXPR() for cron, schedule/unschedule, OSGi-configurable cron expression, ResourceResolverFactory for service users.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:#f87171">🌐 Sling Servlets</h4>
+          <p>@SlingServletResourceTypes, SlingSafeMethodsServlet vs SlingAllMethodsServlet, resource type + extension binding.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent)">🔍 Sling Filters</h4>
+          <p>implements Filter, SLING_FILTER_SCOPE (REQUEST/INCLUDE/etc), @ServiceRanking, filterChain.doFilter(), SlingHttpServletRequest casting.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent3)">👂 Resource Change Listeners</h4>
+          <p>ResourceChangeListener, onChange(), ResourceChange types (ADDED/REMOVED/CHANGED), isExternal().</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent2)">📝 HTL (Sightly)</h4>
+          <p>data-sly-use, data-sly-list, data-sly-test, data-sly-call, ${properties.*}, ${model.*}, itemList loop status, context='unsafe'.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--warn)">🗃️ JCR API</h4>
+          <p>Node.setProperty(), resolver.commit(), jcr:primaryType checks, jcr:content node, ValueMap, reading/writing JCR properties.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent)">📚 ResourceResolver / Sling API</h4>
+          <p>getResource(), listChildren(), getChildren(), adaptTo(), getValueMap(), ResourceResolverFactory for admin resolvers.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent3)">📄 WCM / PageManager API</h4>
+          <p>PageManager, getContainingPage(), create() page, getPage(), Page.getContentResource(). Used in PlanCardScheduler and HelloWorldModel.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--accent2)">🎨 ClientLibraries</h4>
+          <p>clientlib categories (teleconnect.base, .site, .components), CSS/JS inclusion via HTL clientlib template, clientlib.css / clientlib.js helpers.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:var(--warn)">🏗️ Maven Multi-module</h4>
+          <p>core / ui.apps / all / it.tests modules. Parent pom.xml with dependency management. all module for packaging into deployable ZIP.</p>
+        </div>
+        <div class="topic-card">
+          <h4 style="color:#f87171">🧪 Unit Testing</h4>
+          <p>AemContext from io.wcm.testing, Mockito for mocks, test classes for Filter, Listener, Model, Scheduler, Servlet. AppAemContext setup helper.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9 -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>End-to-End Data Flow</h2>
+    </div>
+    <div class="section-body">
+      <p style="font-size:0.88rem;color:var(--muted);margin-bottom:1.5rem;">How plan data gets from a CSV file to the browser:</p>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-dot">1</div>
+          <div class="flow-info">
+            <h4>Author uploads CSV to DAM</h4>
+            <p>CSV files (prepaid-plans.csv, postpaid-plans.csv, broadband-plans.csv) are uploaded to /content/dam/teleconnect/plans/ in AEM Assets.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">2</div>
+          <div class="flow-info">
+            <h4>PlanCardScheduler runs on cron</h4>
+            <p>Every minute (0 * * * * ?), the scheduler reads each CSV via InputStream, parses rows, and uses PageManager.create() to create CQ Pages under /content/teleconnect/us/en/prepaid (and postpaid/broadband).</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">3</div>
+          <div class="flow-info">
+            <h4>CQ Pages written to JCR</h4>
+            <p>Each plan becomes a cq:Page. jcr:content has planName, cost, validity, benefits, offers as JCR properties. resolver.commit() saves to the repository.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">4</div>
+          <div class="flow-info">
+            <h4>Browser requests a page</h4>
+            <p>User visits /content/teleconnect/us/en/home.html. LoggingFilter intercepts, logs the request path and selectors, then calls filterChain.doFilter() to pass it through.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">5</div>
+          <div class="flow-info">
+            <h4>Sling resolves component → HTL</h4>
+            <p>AEM renders the schedulerplanlist component. HTL runs data-sly-use to instantiate SchedulerPlanListModel, adapting the request.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">6</div>
+          <div class="flow-info">
+            <h4>SchedulerPlanListModel.init() runs</h4>
+            <p>@PostConstruct reads the configured plansRootPath, traverses child cq:Pages, reads plan data from each jcr:content ValueMap, builds List&lt;PlanItem&gt;.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">7</div>
+          <div class="flow-info">
+            <h4>HTL renders plan cards</h4>
+            <p>data-sly-list iterates model.plans, emitting one .spl-card div per plan. data-initial and data-instance are written as HTML data attributes for JS.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">8</div>
+          <div class="flow-info">
+            <h4>ClientLibs load → JS enhances</h4>
+            <p>customfooterlibs.html includes teleconnect.components JS. schedulerplanlist.js reads data-initial to hide extra cards, wires the "See More" button.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 10 -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>Likely Interview Questions & Answers</h2>
+    </div>
+    <div class="section-body">
+
+      <div class="qa-block">
+        <div class="qa-q">Q: What is a Sling Model? Why do we use it?</div>
+        <div class="qa-a">A Sling Model is a POJO annotated with <strong>@Model</strong> that gets injected with data from the current request or resource. We use it to separate Java logic from the HTL template. In our project, all components like HeaderModel, PlanListModel have Sling Models. Instead of writing Java inside the template, the model prepares all data and the template just renders it.</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: What is the difference between adaptables = Resource.class and SlingHttpServletRequest.class?</div>
+        <div class="qa-a"><strong>Resource.class</strong>: model gets the current resource only — simpler, no request context. Used in HeroBannerModel.<br/><strong>SlingHttpServletRequest.class</strong>: model gets the full request including session, parameters, and the resource. Used when you need @SlingObject ResourceResolver (like PlanListModel, HeaderModel).</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: What is @PostConstruct and when is it called?</div>
+        <div class="qa-a"><strong>@PostConstruct</strong> marks a method that Sling Models call automatically after all field injections (@ValueMapValue, @ChildResource, etc.) are complete. It is the initialization step. We use it in PlanListModel to fetch Content Fragments and build the plans list, and in HelloWorldModel to build the message string.</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: How does PlanListModel read Content Fragments?</div>
+        <div class="qa-a">It uses ResourceResolver.getResource(cfRootPath) to get the DAM folder, then iterates children. Each child is adapted using <strong>child.adaptTo(ContentFragment.class)</strong>. Then <strong>cf.getElement("planName").getValue().getValue()</strong> reads each field. The CF folder path is determined by the authored productType value (prepaid/postpaid/broadband).</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: Explain how the Scheduler works in this project.</div>
+        <div class="qa-a">PlanCardScheduler implements Runnable and is annotated <strong>@Component(service=Runnable.class)</strong>. In <strong>@Activate</strong>, it registers itself with the Sling <strong>Scheduler</strong> service using a cron expression. Every minute, <strong>run()</strong> is called — it opens a ResourceResolver, reads 3 CSV files from DAM, parses them, and creates CQ Pages per plan using PageManager.create() and Node.setProperty(). <strong>@Deactivate</strong> unregisters the job to prevent memory leaks.</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: What is a Sling Filter? How is LoggingFilter registered?</div>
+        <div class="qa-a">A Sling Filter implements <strong>javax.servlet.Filter</strong> and intercepts requests before they reach the component. LoggingFilter is registered with <strong>SLING_FILTER_SCOPE=REQUEST</strong> so it runs on every HTTP request. The <strong>@ServiceRanking(-700)</strong> determines when in the filter chain it runs. It MUST call <strong>filterChain.doFilter()</strong>, otherwise the request is blocked.</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: What is @ChildResource and when do you use it?</div>
+        <div class="qa-a"><strong>@ChildResource</strong> injects child nodes of the current resource as a List of inner Sling Models. We use it in HeaderModel for navLinks and FooterModel for footerLinks — these are multifield dialog values stored as child nodes in JCR. Each child node maps to the inner NavLink/FooterLink Sling Model (adaptable from Resource.class).</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: What HTL directives did you use and what do they do?</div>
+        <div class="qa-a">
+          <strong>data-sly-use</strong>: loads a Sling Model or Java class<br/>
+          <strong>data-sly-list</strong>: iterates a collection<br/>
+          <strong>data-sly-test</strong>: conditional rendering (renders element only if true)<br/>
+          <strong>data-sly-call</strong>: calls a function from a loaded template<br/>
+          <strong>data-sly-resource</strong>: includes another resource<br/>
+          <strong>${properties.*}</strong>: reads JCR properties directly without a model<br/>
+          <strong>${model.*}</strong>: accesses model getter methods
+        </div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: Why is resolver.close() important in the scheduler?</div>
+        <div class="qa-a">ResourceResolvers are connections to the JCR repository. If not closed, they stay open and cause <strong>resource/memory leaks</strong>. In PlanCardScheduler.run(), we call <strong>resolver.close()</strong> in a finally-like manner after all operations. Also, <strong>resolver.commit()</strong> must be called explicitly to persist JCR changes — without it, all writes are lost when the resolver is closed.</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-q">Q: What is the difference between PlanListModel and SchedulerPlanListModel?</div>
+        <div class="qa-a"><strong>PlanListModel</strong> reads plan data from <strong>Content Fragments in DAM</strong> — structured data authored by content editors using CF models.<br/><strong>SchedulerPlanListModel</strong> reads plan data from <strong>CQ Pages created by the PlanCardScheduler</strong> — pages generated automatically from CSV files uploaded to DAM. Same output (list of plan cards), but completely different data sources.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:2rem 0;color:var(--muted);font-size:0.8rem;font-family:'JetBrains Mono',monospace;">
+    TeleConnect AEM Project · Backend Interview Guide · Generated for your preparation
+  </div>
+
+</div>
+</body>
+</html>
